@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2015
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "graphics_assignment.CSharp.Plugins", "graphics_assignment.CSharp.Plugins.csproj", "{DF3BC6B3-666C-B583-25A4-415815433B29}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "graphics_assignment.CSharp", "graphics_assignment.CSharp.csproj", "{A59C9413-3863-33EA-E85C-F4CEE4DFC872}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "graphics_assignment.CSharp.Editor", "graphics_assignment.CSharp.Editor.csproj", "{81606F3E-C46F-8676-4C52-6DA3971F6F07}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{DF3BC6B3-666C-B583-25A4-415815433B29}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DF3BC6B3-666C-B583-25A4-415815433B29}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DF3BC6B3-666C-B583-25A4-415815433B29}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DF3BC6B3-666C-B583-25A4-415815433B29}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A59C9413-3863-33EA-E85C-F4CEE4DFC872}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A59C9413-3863-33EA-E85C-F4CEE4DFC872}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A59C9413-3863-33EA-E85C-F4CEE4DFC872}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A59C9413-3863-33EA-E85C-F4CEE4DFC872}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81606F3E-C46F-8676-4C52-6DA3971F6F07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81606F3E-C46F-8676-4C52-6DA3971F6F07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81606F3E-C46F-8676-4C52-6DA3971F6F07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81606F3E-C46F-8676-4C52-6DA3971F6F07}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
