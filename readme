@@ -6,4 +6,7 @@ This is the first commit after the creation of the repository. The commit added 
 Commit # 0.02 01/17/2017
 Added a readme file to specify working procedures for this repository.
 
+Commit # 0.03 01/24/2017
+Fixed grabbing and clonning implementations to code, controller scripts modified.
+
 This project assignment belongs to Hong Xu, Terence Williams, Dony Ramier, Joel Michelson, Josh Ladd, and Jack Morrison. All rights to edit, modify and distribute the code are strictly restricted to the people mentioned above. Any unauthorized use will be punished at the full extent of the law.
