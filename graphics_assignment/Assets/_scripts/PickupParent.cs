@@ -46,9 +46,10 @@ public class PickupParent : MonoBehaviour
     {
         SteamVR_Controller.Device device = SteamVR_Controller.Input((int)trackedobj.index);
 
-        
 
-        if(globalcol) globalcol.gameObject.transform.rotation = Quaternion.Euler(-90, yRot, 0);
+
+        if (globalcol) globalcol.gameObject.transform.rotation = Quaternion.Euler(-90, yRot, 0);
+        if (globalcol) shadow.transform.rotation = Quaternion.Euler(-90, yRot, 0);
 
         if (device.GetTouch(SteamVR_Controller.ButtonMask.Trigger))
         {
@@ -58,7 +59,8 @@ public class PickupParent : MonoBehaviour
             Transform loc = gameObject.GetComponent<Transform>();
             Vector3 c = loc.position;
 
-            if (abovePlat()) {
+            if (abovePlat())
+            {
                 double xx = c.x + 9.9; double zz = c.z + 73.3;
                 xx = Math.Round(xx / .30625); zz = Math.Round(zz / .30625);
                 xx *= .30625; zz *= .30625;
@@ -72,7 +74,9 @@ public class PickupParent : MonoBehaviour
                 tra2.position = p;
 
                 if (globalcol) globalcol.gameObject.transform.position = c;
+                if(itemh)shadow.SetActive(true);
             }
+            else if(itemh)shadow.SetActive(false);
         }
         if (device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
         {
@@ -121,7 +125,11 @@ public class PickupParent : MonoBehaviour
             col.attachedRigidbody.isKinematic = false;
             if (globalcol) Debug.Log("Release: " + globalcol.gameObject.name);
             else Debug.Log("No object selected");
+            //if (abovePlat()) {
+                Destroy(globalcol.gameObject);
+            //}
             globalcol = null;
+            shadow.SetActive(true);
             itemh = false;
             //tossObject(col.attachedRigidbody);
         }
