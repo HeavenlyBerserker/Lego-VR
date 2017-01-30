@@ -12,4 +12,7 @@ Fixed grabbing and clonning implementations to code, controller scripts modified
 Commit # 0.04 01/24/2017
 Debugging stuff. Problems: grabbing inconsistencies.
 
+Commit # 0.05 01/29/2017
+Joel Michelson: Matrix implementation and floating stuff.
+
 This project assignment belongs to Hong Xu, Terence Williams, Dony Ramier, Joel Michelson, Josh Ladd, and Jack Morrison. All rights to edit, modify and distribute the code are strictly restricted to the people mentioned above. Any unauthorized use will be punished at the full extent of the law.
