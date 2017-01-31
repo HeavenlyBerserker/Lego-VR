@@ -19,7 +19,7 @@ public class PickupParent : MonoBehaviour
     private bool itemh = false;
     public GameObject sc;
     private Transform tra2;
-    public int[,,] blocks = new int[32,32*3+1,32];
+    public bool[,,] blocks = new bool[32,32*3+1,32];
 
     Collider globalcol = new Collider();
     int yRot = 0;
@@ -33,7 +33,7 @@ public class PickupParent : MonoBehaviour
             {
                 for (int k=0; k<32; k++)
                 {
-                    blocks[i, j, k] =0;
+                    blocks[i, j, k] =false;
                 }
             }
         }
@@ -53,6 +53,7 @@ public class PickupParent : MonoBehaviour
         return false;
     }
 
+
     //given origin and size of a block, returns closest location for it to snap to in blocks[] (currently just origin)
     Vector3 getBlockPlacement(int ox, int oy, int oz, int xs, int zs, int ys)
     {
@@ -60,22 +61,110 @@ public class PickupParent : MonoBehaviour
         //Debug.Log(n);
         for (int kk=oy-1; kk>=0; kk--)
         {
-            if ((blocks[ox,kk,oz] == 1 && blocks[ox, kk+1, oz] == 0) || kk == 0)
+            if ((blocks[ox,kk,oz] == true && blocks[ox, kk+1, oz] == false) || kk == 0)
             {
                 n = new Vector3(ox,kk+1,oz);
-                Debug.Log(n);
+                //Debug.Log(n);
                 return n;
             }
         }
         return n;
     }
 
+    //Given a collider, it determines the boundaries.
+    //return Vector4 (min x to check in array, max x, min z, max z)
+    Vector4 getBlockXYCoor(GameObject go)
+    {
+        Collider colsize = go.GetComponent<Collider>();
+        Vector3 max = colsize.bounds.max;
+        Vector3 min = colsize.bounds.min;
+        Vector4 check = new Vector4(Mathf.Abs(Mathf.Round((min.x - (-9.9f))/.30625f)),
+            Mathf.Abs(Mathf.Round((max.x - (-9.9f)) / .30625f)),
+            Mathf.Abs(Mathf.Round((min.z-(-73.3f))/.30625f)),
+            Mathf.Abs(Mathf.Round((max.z - (-73.3f)) / .30625f)));
+        Debug.Log(max + " " + min);
+        Debug.Log("Curr block coordinate boundaries: x(" + check.x + ", " + check.y + ") z(" + check.z + ", " + check.w + ")");
+        return check;
+    }
+
+    //Given a collider, it determines the boundaries.
+    //return int [] {min x to check in array, max x, min y, max y, min z, min z}
+    int[] getBlockXYZCoor(GameObject go, bool print)
+    {
+        Collider colsize = go.GetComponent<Collider>();
+        Vector3 max = colsize.bounds.max;
+        Vector3 min = colsize.bounds.min;
+        int[] check = new int[6]{(int)Mathf.Abs(Mathf.Round((max.x - (-9.9f)) / .30625f)),
+            (int)(Mathf.Abs(Mathf.Round((min.x - (-9.9f)) / .30625f))),
+            (int)Mathf.Abs(Mathf.Round((min.y - (21.3f)) / .12533f)),
+            (int)Mathf.Abs(Mathf.Round((max.y - (21.3f)) / .12533f)),
+            (int)Mathf.Abs(Mathf.Round((max.z - (-73.3f)) / .30625f)),
+            (int)Mathf.Abs(Mathf.Round((min.z - (-73.3f)) / .30625f))
+        };
+        //Debug.Log(max + " " + min);
+        if(print)Debug.Log("Curr block coordinate boundaries: x(" + check[0] + ", " + check[1] + ") y(" + check[2] + ", " + check[3] + ")" + ") z(" + check[4] + ", " + check[5] + ")");
+        return check;
+    }
+
+    //Adds the block to the matrix
+    bool addBlock2Array(GameObject ob) {
+        int[] coors = getBlockXYZCoor(ob, false);
+        //Debug.Log("Hi");
+
+        for (int i = coors[0]; i < coors[1]; i++) {
+            for (int j = coors[2]; j < coors[3]; j++)
+            {
+                for (int k = coors[4]; k < coors[5]; k++)
+                {
+                    blocks[i, j, k] = true;
+                    //Debug.Log("Added "+ i + ", " + j + ", " + k + "to matrix");
+                }
+            }
+        }
+
+        return true;
+    }
+
+    //################In Progress######################
+    //Determines the y location the shadow should be at
+    float determineY(GameObject ob) {
+        float finalY = 21.3f;
+
+        int[] coors = getBlockXYZCoor(ob,false);
+
+        int max = 0;
+        for (int i = coors[0]; i < coors[1]; i++)
+        {
+            for (int j = coors[4]; j < coors[5]; j++)
+            {
+                int localmax = 0;
+                for (int k = 0; k < coors[4]; k++)
+                {
+                    if (blocks[i, k, j] == true)
+                        localmax = k + 1;
+                }
+                if (localmax > max)
+                    max = localmax;
+            }
+        }
+
+        //max += 1;
+        finalY += max * .12533f;
+
+        return finalY;
+    }
+
+    /*
     //given origin and size of a block, set region in blocks[] to 1 (currently just origin)
     void updateBlocks(int ox, int oy, int oz, int xs, int zs, int ys)
     {
-        blocks[ox, oy, oz] = 1;
-    }
+        blocks[ox, oy, oz] = false;
+    }*/
 
+
+    //Update----------------------------------------
+    //Function with object modification functions
+    //----------------------------------------------
     void Update()
     {
         Vector3 locvec = new Vector3();
@@ -96,14 +185,14 @@ public class PickupParent : MonoBehaviour
             {
                 double xx = c.x + 9.9; double zz = c.z + 73.3;
                 xx = Math.Round(xx / .30625); zz = Math.Round(zz / .30625);
-                xx *= .30625; zz *= .30625;
+                xx *= .30625; zz *= .30625;                
                 xx -= 9.9; zz -= 73.3;
                 c.x = (float)xx; c.z = (float)zz;
 
                 Vector3 p = c;
 
                 int xxx = -(int)Math.Round((c.x+9.9) / .30625);
-                int yyy = (int)Math.Round((c.y-21.2)/ .30625);  //currently divided by same value as xwidth instead of height
+                int yyy = (int)Math.Round((c.y-21.3)/ .12533f);  //currently divided by same value as xwidth instead of height
                 int zzz = -(int)Math.Round((c.z+73.3)/ .30625);
 
                 //Modify the height of the shadow cast
@@ -111,7 +200,7 @@ public class PickupParent : MonoBehaviour
                 locvec = p; //used when block is placed
 
                 p.x = -.30625f * (float)p.x - 9.9f;
-                p.y = .30625f*(float)p.y + 21.2f;
+                p.y = determineY(globalcol.gameObject);//Determines y coordinate for current block                     //.12533f * (float)p.y + 21.3f;
                 p.z = -.30625f * (float)p.z - 73.3f;
                 //p.y = getBlockPlacement(xx,zz,p.y);//21.2f;
                 //
@@ -136,7 +225,10 @@ public class PickupParent : MonoBehaviour
             if (globalcol) Debug.Log("Release: " + globalcol.gameObject.name);
             else Debug.Log("No object selected");
 
-            updateBlocks((int)locvec.x,(int)locvec.y,(int)locvec.z, 1, 1, 1);
+            //updateBlocks((int)locvec.x,(int)locvec.y,(int)locvec.z, 1, 1, 1);
+            getBlockXYZCoor(shadow, true);
+            addBlock2Array(shadow);
+
             //if (abovePlat()) {
             Destroy(globalcol.gameObject);
             //}
@@ -147,6 +239,9 @@ public class PickupParent : MonoBehaviour
         }
     }
 
+    //OnTriggerStay---------------------------------
+    //Function with pickup funtions
+    //----------------------------------------------
     void OnTriggerStay(Collider col)
     {
         SteamVR_Controller.Device device = SteamVR_Controller.Input((int)trackedobj.index);
@@ -165,6 +260,7 @@ public class PickupParent : MonoBehaviour
             Vector3 ma = coll.bounds.max;
             Vector3 mi = coll.bounds.min;
             shadow = Instantiate(globalcol.gameObject, c, Quaternion.Euler(-90, yRot, 0)) as GameObject;
+            
 
             tra2 = shadow.GetComponent<Transform>();
             Vector3 p = tra2.position;
