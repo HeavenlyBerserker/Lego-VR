@@ -18,4 +18,7 @@ Joel Michelson: Matrix implementation and floating stuff.
 Commit # 0.06 01/31/2017
 Figures out collider boundaries and primordial code for stacking bottom-up.
 
+Commit # 0.07 02/07/2017
+Tried to figure out a good scale for the program.
+
 This project assignment belongs to Hong Xu, Terence Williams, Dony Ramier, Joel Michelson, Josh Ladd, and Jack Morrison. All rights to edit, modify and distribute the code are strictly restricted to the people mentioned above. Any unauthorized use will be punished at the full extent of the law.
