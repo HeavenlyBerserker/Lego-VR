@@ -24,4 +24,7 @@ Tried to figure out a good scale for the program.
 Commit # 0.08 02/21/2017
 Debugged: Fixed the 3-height block collider problem. Imported room model without texture. Alligned everything to their respective places. Looks pretty cool!
 
+Commit # 0.09 02/22/2017
+Corrected code. Allowed off-platform mechanics and some other problems.
+
 This project assignment belongs to Hong Xu, Terence Williams, Dony Ramier, Joel Michelson, Josh Ladd, and Jack Morrison. All rights to edit, modify and distribute the code are strictly restricted to the people mentioned above. Any unauthorized use will be punished at the full extent of the law.

@@ -117,8 +117,8 @@ public class PickupParent : MonoBehaviour
             Mathf.Abs(Mathf.Round((max.x - (-9.9f)) / .30625f)),
             Mathf.Abs(Mathf.Round((min.z-(-73.3f))/.30625f)),
             Mathf.Abs(Mathf.Round((max.z - (-73.3f)) / .30625f)));
-        Debug.Log(max + " " + min);
-        Debug.Log("Curr block coordinate boundaries: x(" + check.x + ", " + check.y + ") z(" + check.z + ", " + check.w + ")");
+        //Debug.Log(max + " " + min);
+        //Debug.Log("Curr block coordinate boundaries: x(" + check.x + ", " + check.y + ") z(" + check.z + ", " + check.w + ")");
         return check;
     }
 
@@ -151,10 +151,9 @@ public class PickupParent : MonoBehaviour
     //Adds the block to the matrix
     bool addBlock2Array(GameObject ob)
     {
-        int[] coors = getBlockXYZCoor(ob, true);
+        int[] coors = getBlockXYZCoor(ob, false);
         //Debug.Log("Hi");
-
-        int coun = 0;
+        
 
         for (int i = coors[0]; i < coors[1]; i++)
         {
@@ -163,18 +162,39 @@ public class PickupParent : MonoBehaviour
                 for (int k = coors[4]; k < coors[5]; k++)
                 {
                     blocks[i, j, k] = true;
-                    coun++;
+                    //Debug.Log("Added "+ i + ", " + j + ", " + k + "to matrix");
+                }
+            }
+        }
+        
+
+        return true;
+    }
+
+    //Removes the block from the matrix
+    bool removeBlockFromArray(GameObject ob)
+    {
+        int[] coors = getBlockXYZCoor(ob, false);
+        //Debug.Log("Hi");
+        
+
+        for (int i = coors[0]; i < coors[1]; i++)
+        {
+            for (int j = coors[2]; j < coors[3]; j++)
+            {
+                for (int k = coors[4]; k < coors[5]; k++)
+                {
+                    blocks[i, j, k] = false;
                     //Debug.Log("Added "+ i + ", " + j + ", " + k + "to matrix");
                 }
             }
         }
 
-        Debug.Log("Added " + coun + " units to matrix");
 
         return true;
     }
 
-    //################In Progress######################
+
     //Determines the y location the shadow should be at
     float determineY(GameObject ob) {
         float finalY = 21.3f;
@@ -241,15 +261,15 @@ public class PickupParent : MonoBehaviour
             {
                 double xx = c.x + 9.9; double zz = c.z + 73.3;
                 xx = Math.Round(xx / .30625); zz = Math.Round(zz / .30625);
-                xx *= .30625; zz *= .30625;                
+                xx *= .30625; zz *= .30625;
                 xx -= 9.9; zz -= 73.3;
                 c.x = (float)xx; c.z = (float)zz;
 
                 Vector3 p = c;
 
-                int xxx = -(int)Math.Round((c.x+9.9) / .30625);
-                int yyy = (int)Math.Round((c.y-21.3)/ .12533f);  //currently divided by same value as xwidth instead of height
-                int zzz = -(int)Math.Round((c.z+73.3)/ .30625);
+                int xxx = -(int)Math.Round((c.x + 9.9) / .30625);
+                int yyy = (int)Math.Round((c.y - 21.3) / .12533f);  //currently divided by same value as xwidth instead of height
+                int zzz = -(int)Math.Round((c.z + 73.3) / .30625);
 
                 //Modify the height of the shadow cast
                 p = getBlockPlacement(xxx, yyy, zzz, 1, 1, 1);
@@ -263,9 +283,11 @@ public class PickupParent : MonoBehaviour
                 tra2.position = p;
 
                 if (globalcol) globalcol.gameObject.transform.position = c;
-                if(itemh)shadow.SetActive(true);
+                if (itemh) shadow.SetActive(true);
             }
-            else if(itemh)shadow.SetActive(false);
+            else {
+                if (itemh) shadow.SetActive(false);
+            }
         }
         if (device.GetPressDown(SteamVR_Controller.ButtonMask.Touchpad))
         {
@@ -280,17 +302,19 @@ public class PickupParent : MonoBehaviour
             globalcol.attachedRigidbody.isKinematic = false;
             if (globalcol) Debug.Log("Release: " + globalcol.gameObject.name);
             else Debug.Log("No object selected");
+            if (abovePlat())
+            {
+                //updateBlocks((int)locvec.x,(int)locvec.y,(int)locvec.z, 1, 1, 1);
+                addBlock2Array(shadow);
+                //Debug.Log("Block Added");
+                printMat();
 
-            //updateBlocks((int)locvec.x,(int)locvec.y,(int)locvec.z, 1, 1, 1);
-            addBlock2Array(shadow);
-            //Debug.Log("Block Added");
-            printMat();
-
-            //if (abovePlat()) {
-            Destroy(globalcol.gameObject);
-            //}
+                //if (abovePlat()) {
+                Destroy(globalcol.gameObject);
+                //}
+                shadow.SetActive(true);
+            }
             globalcol = null;
-            shadow.SetActive(true);
             itemh = false;
             //tossObject(col.attachedRigidbody);
         }
@@ -310,6 +334,7 @@ public class PickupParent : MonoBehaviour
             col.gameObject.transform.SetParent(gameObject.transform);
             globalcol = col;
             if (globalcol) Debug.Log("Grab: " + globalcol.gameObject.name);
+            if (abovePlat()) removeBlockFromArray(col.gameObject);
 
             //Creating shadow---------
             Collider coll = globalcol.gameObject.GetComponent<Collider>();
