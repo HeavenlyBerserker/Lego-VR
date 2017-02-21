@@ -53,8 +53,43 @@ public class PickupParent : MonoBehaviour
         return false;
     }
 
+    bool printMat() {
+        int maxH = 0;
+        //Debug.Log("Before Calc maxH: " + maxH + "\n");
+        for (int i = 0; i < 32; i++)
+        {
+            for (int j = 0; j < 32 * 3 + 1; j++)
+            {
 
-    //given origin and size of a block, returns closest location for it to snap to in blocks[] (currently just origin)
+                for (int k = 0; k < 32; k++)
+                {
+                    if(blocks[i, j, k]) maxH = j;
+                }
+            }
+        }
+
+        //Debug.Log("maxH: " + maxH + "\n");
+
+        for (int j = 0; j < maxH+3 + 1; j++)
+        {
+            string deb = "Height: " + j + "\n";
+            for (int k = 0; k < 32; k++)
+            {
+                for (int i = 0; i < 32; i++)
+                {
+                    if (blocks[i, j, k]) deb += "+";
+                    else deb += "=";
+                }
+                deb += "\n";
+            }
+           // Debug.Log(deb);
+        }
+        
+
+        return true;
+    }
+
+    //Joel: given origin and size of a block, returns closest location for it to snap to in blocks[] (currently just origin)
     Vector3 getBlockPlacement(int ox, int oy, int oz, int xs, int zs, int ys)
     {
         Vector3 n = new Vector3(ox,oy,oz);
@@ -94,6 +129,8 @@ public class PickupParent : MonoBehaviour
         Collider colsize = go.GetComponent<Collider>();
         Vector3 max = colsize.bounds.max;
         Vector3 min = colsize.bounds.min;
+
+        //Switch y and z
         int[] check = new int[6]{(int)Mathf.Abs(Mathf.Round((max.x - (-9.9f)) / .30625f)),
             (int)(Mathf.Abs(Mathf.Round((min.x - (-9.9f)) / .30625f))),
             (int)Mathf.Abs(Mathf.Round((min.y - (21.3f)) / .12533f)),
@@ -103,24 +140,36 @@ public class PickupParent : MonoBehaviour
         };
         //Debug.Log(max + " " + min);
         if(print)Debug.Log("Curr block coordinate boundaries: x(" + check[0] + ", " + check[1] + ") y(" + check[2] + ", " + check[3] + ")" + ") z(" + check[4] + ", " + check[5] + ")");
+
+        if (check[1] > 32) check[1] = 32;
+        if (check[2] > 32 * 3 + 1) check[2] = 32 * 3 + 1;
+        if (check[3] > 32) check[3] = 32;
+
         return check;
     }
 
     //Adds the block to the matrix
-    bool addBlock2Array(GameObject ob) {
-        int[] coors = getBlockXYZCoor(ob, false);
+    bool addBlock2Array(GameObject ob)
+    {
+        int[] coors = getBlockXYZCoor(ob, true);
         //Debug.Log("Hi");
 
-        for (int i = coors[0]; i < coors[1]; i++) {
+        int coun = 0;
+
+        for (int i = coors[0]; i < coors[1]; i++)
+        {
             for (int j = coors[2]; j < coors[3]; j++)
             {
                 for (int k = coors[4]; k < coors[5]; k++)
                 {
                     blocks[i, j, k] = true;
+                    coun++;
                     //Debug.Log("Added "+ i + ", " + j + ", " + k + "to matrix");
                 }
             }
         }
+
+        Debug.Log("Added " + coun + " units to matrix");
 
         return true;
     }
@@ -132,13 +181,15 @@ public class PickupParent : MonoBehaviour
 
         int[] coors = getBlockXYZCoor(ob,false);
 
+        //Debug.Log("X [" + coors[0] + " " + coors[1] + "] " + " Z [" + coors[4] + " " + coors[5] + "] ");
+
         int max = 0;
         for (int i = coors[0]; i < coors[1]; i++)
         {
             for (int j = coors[4]; j < coors[5]; j++)
             {
                 int localmax = 0;
-                for (int k = 0; k < coors[4]; k++)
+                for (int k = 0; k < coors[2]; k++)
                 {
                     if (blocks[i, k, j] == true)
                         localmax = k + 1;
@@ -147,6 +198,8 @@ public class PickupParent : MonoBehaviour
                     max = localmax;
             }
         }
+
+
 
         //max += 1;
         finalY += max * .12533f;
@@ -167,20 +220,23 @@ public class PickupParent : MonoBehaviour
     //----------------------------------------------
     void Update()
     {
+
         Vector3 locvec = new Vector3();
+        //Get controller
         SteamVR_Controller.Device device = SteamVR_Controller.Input((int)trackedobj.index);
 
+        //set rotations to yRot
         if (globalcol) globalcol.gameObject.transform.rotation = Quaternion.Euler(-90, yRot, 0);
         if (globalcol) shadow.transform.rotation = Quaternion.Euler(-90, yRot, 0);
 
+        //If device trigger is pressed
         if (device.GetTouch(SteamVR_Controller.ButtonMask.Trigger))
         {
-            //holdt = !holdt;
-            //Debug.Log("You are holding down the trigger");
-
+            //getting location
             Transform loc = gameObject.GetComponent<Transform>();
             Vector3 c = loc.position;
 
+            //If lego is above the platform
             if (abovePlat())
             {
                 double xx = c.x + 9.9; double zz = c.z + 73.3;
@@ -226,8 +282,9 @@ public class PickupParent : MonoBehaviour
             else Debug.Log("No object selected");
 
             //updateBlocks((int)locvec.x,(int)locvec.y,(int)locvec.z, 1, 1, 1);
-            getBlockXYZCoor(shadow, true);
             addBlock2Array(shadow);
+            //Debug.Log("Block Added");
+            printMat();
 
             //if (abovePlat()) {
             Destroy(globalcol.gameObject);
