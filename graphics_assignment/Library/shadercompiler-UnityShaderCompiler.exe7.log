@@ -1,0 +1,22 @@
+Base path: C:/Program Files/Unity/Editor/Data
+Cmd: getPlatforms
+Cmd: compileSnippet
+  api=1 type=0 insize=3645 outsize=292 kw=POINT pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_HARDWARE_TIER2 ok=1
+Cmd: disassembleShader
+  api=9 insize=292 outsize=514 ok=1
+Cmd: compileSnippet
+  api=1 type=1 insize=3645 outsize=128 kw=POINT pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_HARDWARE_TIER2 ok=1
+Cmd: disassembleShader
+  api=11 insize=128 outsize=152 ok=1
+Cmd: compileSnippet
+  api=1 type=1 insize=3645 outsize=128 kw=SPOT pd=UNITY_ENABLE_REFLECTION_BUFFERS UNITY_PBS_USE_BRDF1 UNITY_SPECCUBE_BOX_PROJECTION UNITY_SPECCUBE_BLENDING UNITY_HARDWARE_TIER3 ok=1
+Cmd: disassembleShader
+  api=11 insize=128 outsize=152 ok=1
+Cmd: disassembleShader
+  api=9 insize=292 outsize=514 ok=1
+Cmd: disassembleShader
+  api=9 insize=292 outsize=514 ok=1
+Cmd: disassembleShader
+  api=14 insize=330 outsize=892 ok=1
+Cmd: disassembleShader
+  api=14 insize=330 outsize=892 ok=1

@@ -206,7 +206,7 @@ public class PickupParent : MonoBehaviour
         int max = 0;
         for (int i = coors[0]; i < coors[1]; i++)
         {
-            for (int j = coors[4]; j < coors[5]; j++)
+            for (int j = coors[4]; j < Math.Min(Math.Max(coors[5],0),32*3); j++)
             {
                 int localmax = 0;
                 for (int k = 0; k < coors[2]; k++)
@@ -225,6 +225,33 @@ public class PickupParent : MonoBehaviour
         finalY += max * .12533f;
 
         return finalY;
+    }
+
+    //+++++++++++++++++++++++++
+    //In Progress
+    //+++++++++++++++++++++++++
+    //Determines if object ob is locked
+    bool locked(GameObject ob)
+    {
+        if (!abovePlat()) return false;
+        bool locked = false;
+
+        int[] coors = getBlockXYZCoor(ob, false);
+
+        //Debug.Log("X [" + coors[0] + " " + coors[1] + "] " + " Z [" + coors[4] + " " + coors[5] + "] ");
+        
+        for (int i = coors[0]; i < coors[1]; i++)
+        {
+            for (int j = coors[4]; j < Math.Min(Math.Max(coors[5], 0), 32 * 3); j++)
+            {
+                for (int k = coors[2]; k < 32*3; k++)
+                {
+                    if (blocks[i, k, j] == true)
+                        locked = true;
+                }
+            }
+        }
+        return locked;
     }
 
     /*
@@ -295,7 +322,7 @@ public class PickupParent : MonoBehaviour
             yRot += 90;
         }
 
-        if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger))
+        if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger) && globalcol != null)
         {
             //Debug.Log("You have released PressUp while colliding with " + col.name);
             globalcol.gameObject.transform.SetParent(null);
@@ -325,37 +352,48 @@ public class PickupParent : MonoBehaviour
     //----------------------------------------------
     void OnTriggerStay(Collider col)
     {
+        
+        /*Renderer mat = Instantiate(col.gameObject.GetComponent<Renderer>());
+        Material egg = mat.material;
+        egg.shader = Shader.Find("Custom/outline");
+        Debug.Log(egg.shader);
+        //egg = mat;*/
         SteamVR_Controller.Device device = SteamVR_Controller.Input((int)trackedobj.index);
         //Debug.Log("You have collided with " + col.name + " and activated OnTriggerStay");
-        if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && itemh == false)
+        if (device.GetPressDown(SteamVR_Controller.ButtonMask.Trigger) && itemh == false) // && col.gameObject.transform.tag != "UnGrabbable"
         {
             //Debug.Log("You have collided with " + col.name + " while holding down touch");
-            col.attachedRigidbody.isKinematic = true;
-            col.gameObject.transform.SetParent(gameObject.transform);
-            globalcol = col;
-            if (globalcol) Debug.Log("Grab: " + globalcol.gameObject.name);
-            if (abovePlat()) removeBlockFromArray(col.gameObject);
-
-            //Creating shadow---------
-            Collider coll = globalcol.gameObject.GetComponent<Collider>();
-            Vector3 c = coll.bounds.center;
-            Vector3 ma = coll.bounds.max;
-            Vector3 mi = coll.bounds.min;
-            shadow = Instantiate(globalcol.gameObject, c, Quaternion.Euler(-90, yRot, 0)) as GameObject;
+            if (!locked(col.gameObject))
+            {
+                col.attachedRigidbody.isKinematic = true;
+                col.gameObject.transform.SetParent(gameObject.transform);
             
+                globalcol = col;
 
-            tra2 = shadow.GetComponent<Transform>();
-            Vector3 p = tra2.position;
-            p.y = 22;
-            tra2.position = p;
-            tra2.localScale = new Vector3(1, 1, 1);
-            /*
-            Color cc = shadow.gameObject.GetComponent<Renderer>().material.color;
-            cc.a = 0.5f;
-            shadow.gameObject.GetComponent<Renderer>().material.color = cc;*/
-            //----------------------
+                if (globalcol) Debug.Log("Grab: " + globalcol.gameObject.name);
+                if (abovePlat()) removeBlockFromArray(col.gameObject);
 
-            itemh = true;
+                //Creating shadow---------
+                Collider coll = globalcol.gameObject.GetComponent<Collider>();
+                Vector3 c = coll.bounds.center;
+                Vector3 ma = coll.bounds.max;
+                Vector3 mi = coll.bounds.min;
+                shadow = Instantiate(globalcol.gameObject, c, Quaternion.Euler(-90, yRot, 0)) as GameObject;
+
+
+                tra2 = shadow.GetComponent<Transform>();
+                Vector3 p = tra2.position;
+                p.y = 22;
+                tra2.position = p;
+                tra2.localScale = new Vector3(1, 1, 1);
+                /*
+                Color cc = shadow.gameObject.GetComponent<Renderer>().material.color;
+                cc.a = 0.5f;
+                shadow.gameObject.GetComponent<Renderer>().material.color = cc;*/
+                //----------------------
+
+                itemh = true;
+            }
         }
         
     }

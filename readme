@@ -27,4 +27,7 @@ Debugged: Fixed the 3-height block collider problem. Imported room model without
 Commit # 0.09 02/22/2017
 Corrected code. Allowed off-platform mechanics and some other problems.
 
+Commit # 0.10 02/22/2017
+Corrected code. Fixed collider problem with sphere thing. Perfected block spawning for pilot test zero. Working on locking blocks that have other blocks on.
+
 This project assignment belongs to Hong Xu, Terence Williams, Dony Ramier, Joel Michelson, Josh Ladd, and Jack Morrison. All rights to edit, modify and distribute the code are strictly restricted to the people mentioned above. Any unauthorized use will be punished at the full extent of the law.
