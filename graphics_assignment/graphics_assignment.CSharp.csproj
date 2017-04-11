@@ -103,6 +103,7 @@
     <Compile Include="Assets\SteamVR\Scripts\SteamVR_UpdatePoses.cs" />
     <Compile Include="Assets\SteamVR\Scripts\SteamVR_Utils.cs" />
     <Compile Include="Assets\_scripts\Controller.cs" />
+    <Compile Include="Assets\_scripts\Countdown.cs" />
     <Compile Include="Assets\_scripts\PickupParent.cs" />
     <Compile Include="Assets\_scripts\spawnBlocks.cs" />
     <Compile Include="Assets\_scripts\spawnBlocks0.cs" />

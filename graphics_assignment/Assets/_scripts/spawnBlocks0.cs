@@ -6,7 +6,7 @@ public class spawnBlocks0 : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 
-        string[] blockNames = { "Blocks/black2x10" , "Blocks/red2x8" , "Blocks/green1x8", "Blocks/green2x6", "Blocks/grey2x4", "Blocks/grey2x4", "Blocks/black2x2", "Blocks/green1x6 (1)", "Blocks/blue1x4", "Blocks/green1x3", "Blocks/black2x2", "Blocks/orange1x3", "Blocks/1x1 (2)", };
+        string[] blockNames = { "Blocks/black2x10" , "Blocks/red2x8" , "Blocks/green1x8", "Blocks/green2x6", "Blocks/grey2x4", "Blocks/purple1x3x2", "Blocks/black2x2", "Blocks/green1x6 (1)", "Blocks/blue1x4", "Blocks/green1x3", "Blocks/orange2x2x.33", "Blocks/orange1x3", "Blocks/1x1 (2)", };
         int[] blockNums = { 2,2,3,4,5,6,7,8,9,10,20,11,12};
         int[] blockNums2 = { 2, 2, 3, 4, 5, 6, 7, 8, 9, 10, 20, 11, 12 };
         int xx = -20;

@@ -53,6 +53,21 @@ public class PickupParent : MonoBehaviour
         return false;
     }
 
+    bool abovePlat(GameObject obj)
+    {
+        if (obj)
+        {
+            Transform loc = obj.GetComponent<Transform>();
+            Vector3 c = loc.position;
+
+            if (c.x < -9.9 && c.x > -19.7 && c.z < -73.3 && c.z > -83.1 && c.y > 21.2)
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
     bool printMat() {
         int maxH = 0;
         //Debug.Log("Before Calc maxH: " + maxH + "\n");
@@ -94,15 +109,20 @@ public class PickupParent : MonoBehaviour
     {
         Vector3 n = new Vector3(ox,oy,oz);
         //Debug.Log(n);
-        for (int kk=oy-1; kk>=0; kk--)
+        if (oy < 32 * 3 + 1) oy = 32 * 3 -1;
+
+
+        for (int kk = oy - 1; kk >= 0; kk--)
         {
-            if ((blocks[ox,kk,oz] == true && blocks[ox, kk+1, oz] == false) || kk == 0)
+            //Debug.Log(ox + " " + kk + " " + oz);
+            if ((blocks[ox, kk, oz] == true && blocks[ox, kk + 1, oz] == false) || kk == 0)
             {
-                n = new Vector3(ox,kk+1,oz);
+                n = new Vector3(ox, kk + 1, oz);
                 //Debug.Log(n);
                 return n;
             }
         }
+        
         return n;
     }
 
@@ -226,17 +246,18 @@ public class PickupParent : MonoBehaviour
 
         return finalY;
     }
-
-    //+++++++++++++++++++++++++
-    //In Progress
-    //+++++++++++++++++++++++++
+    
     //Determines if object ob is locked
     bool locked(GameObject ob)
     {
-        if (!abovePlat()) return false;
+        if (!abovePlat(ob)) {
+            Debug.Log("Assumed false...");
+            return false;
+        }
+        Debug.Log("Checking...");
         bool locked = false;
 
-        int[] coors = getBlockXYZCoor(ob, false);
+        int[] coors = getBlockXYZCoor(ob, true);
 
         //Debug.Log("X [" + coors[0] + " " + coors[1] + "] " + " Z [" + coors[4] + " " + coors[5] + "] ");
         
@@ -244,7 +265,7 @@ public class PickupParent : MonoBehaviour
         {
             for (int j = coors[4]; j < Math.Min(Math.Max(coors[5], 0), 32 * 3); j++)
             {
-                for (int k = coors[2]; k < 32*3; k++)
+                for (int k = coors[3]; k < 32*3; k++)
                 {
                     if (blocks[i, k, j] == true)
                         locked = true;
@@ -279,6 +300,7 @@ public class PickupParent : MonoBehaviour
         //If device trigger is pressed
         if (device.GetTouch(SteamVR_Controller.ButtonMask.Trigger))
         {
+
             //getting location
             Transform loc = gameObject.GetComponent<Transform>();
             Vector3 c = loc.position;
@@ -365,6 +387,7 @@ public class PickupParent : MonoBehaviour
             //Debug.Log("You have collided with " + col.name + " while holding down touch");
             if (!locked(col.gameObject))
             {
+                yRot = 0;
                 col.attachedRigidbody.isKinematic = true;
                 col.gameObject.transform.SetParent(gameObject.transform);
             
