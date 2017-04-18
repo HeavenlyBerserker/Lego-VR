@@ -35,7 +35,7 @@ public class Countdown : MonoBehaviour
             minutes = 0;
             seconds = 0;
         }
-        GetComponent<TextMesh>().text = string.Format("{0:0}:{1:00}", minutes, seconds);
+        GetComponent<TextMesh>().text = string.Format("{0:00}:{1:00}", minutes, seconds);
         //        fraction = (timeLeft * 100) % 100;
     }
 

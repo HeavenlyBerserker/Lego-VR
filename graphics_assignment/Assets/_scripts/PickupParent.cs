@@ -10,7 +10,7 @@ public class PickupParent : MonoBehaviour
 
     SteamVR_TrackedObject trackedobj;
     SteamVR_Controller.Device device;
-    public Transform sphere;
+    public GameObject sphere;
     public GameObject platform;
     private GameObject shadow;
     public float speed = 10.0f;
@@ -20,6 +20,7 @@ public class PickupParent : MonoBehaviour
     public GameObject sc;
     private Transform tra2;
     public bool[,,] blocks = new bool[32,32*3+1,32];
+    private bool made = false;
 
     Collider globalcol = new Collider();
     int yRot = 0;
@@ -42,7 +43,8 @@ public class PickupParent : MonoBehaviour
     bool abovePlat() {
         if (globalcol)
         {
-            Transform loc = gameObject.GetComponent<Transform>();
+            
+            Transform loc = sphere.GetComponent<Transform>();
             Vector3 c = loc.position;
 
             if (c.x < -9.9 && c.x > -19.7 && c.z < -73.3 && c.z > -83.1 && c.y > 21.2)
@@ -57,7 +59,7 @@ public class PickupParent : MonoBehaviour
     {
         if (obj)
         {
-            Transform loc = obj.GetComponent<Transform>();
+            Transform loc = sphere.GetComponent<Transform>();
             Vector3 c = loc.position;
 
             if (c.x < -9.9 && c.x > -19.7 && c.z < -73.3 && c.z > -83.1 && c.y > 21.2)
@@ -171,7 +173,8 @@ public class PickupParent : MonoBehaviour
     //Adds the block to the matrix
     bool addBlock2Array(GameObject ob)
     {
-        int[] coors = getBlockXYZCoor(ob, false);
+        
+        int[] coors = lastCheck(ob, true);
         //Debug.Log("Hi");
         
 
@@ -179,7 +182,7 @@ public class PickupParent : MonoBehaviour
         {
             for (int j = coors[2]; j < coors[3]; j++)
             {
-                for (int k = coors[4]; k < coors[5]; k++)
+                for (int k = coors[4]; k < Math.Min(Math.Max(coors[5], 0), 32 * 3); k++)
                 {
                     blocks[i, j, k] = true;
                     //Debug.Log("Added "+ i + ", " + j + ", " + k + "to matrix");
@@ -194,7 +197,7 @@ public class PickupParent : MonoBehaviour
     //Removes the block from the matrix
     bool removeBlockFromArray(GameObject ob)
     {
-        int[] coors = getBlockXYZCoor(ob, false);
+        int[] coors = getBlockXYZCoor(ob, true);
         //Debug.Log("Hi");
         
 
@@ -202,7 +205,7 @@ public class PickupParent : MonoBehaviour
         {
             for (int j = coors[2]; j < coors[3]; j++)
             {
-                for (int k = coors[4]; k < coors[5]; k++)
+                for (int k = coors[4]; k < Math.Min(Math.Max(coors[5], 0), 32 * 3); k++)
                 {
                     blocks[i, j, k] = false;
                     //Debug.Log("Added "+ i + ", " + j + ", " + k + "to matrix");
@@ -282,6 +285,53 @@ public class PickupParent : MonoBehaviour
         blocks[ox, oy, oz] = false;
     }*/
 
+    //lastCheck----------------------------------------
+    //Last modification and change before adding block 
+    //----------------------------------------------
+    int[] lastCheck(GameObject go, bool print)
+    {
+        Vector3 locvec = new Vector3();
+        //Get controller
+        SteamVR_Controller.Device device = SteamVR_Controller.Input((int)trackedobj.index);
+
+        //set rotations to yRot
+        if (globalcol) globalcol.gameObject.transform.rotation = Quaternion.Euler(-90, yRot, 0);
+        if (globalcol) shadow.transform.rotation = Quaternion.Euler(-90, yRot, 0);
+
+        //If device trigger is pressed
+            //getting location
+            Transform loc = sphere.GetComponent<Transform>();
+            Vector3 c = loc.position;
+
+            //If lego is above the platform
+            
+        double xx = c.x + 9.9; double zz = c.z + 73.3;
+        xx = Math.Round(xx / .30625); zz = Math.Round(zz / .30625);
+        xx *= .30625; zz *= .30625;
+        xx -= 9.9; zz -= 73.3;
+        c.x = (float)xx; c.z = (float)zz;
+
+        Vector3 p = c;
+
+        int xxx = -(int)Math.Round((c.x + 9.9) / .30625);
+        int yyy = (int)Math.Round((c.y - 21.3) / .12533f);  //currently divided by same value as xwidth instead of height
+        int zzz = -(int)Math.Round((c.z + 73.3) / .30625);
+
+        //Modify the height of the shadow cast
+        p = getBlockPlacement(xxx, yyy, zzz, 1, 1, 1);
+        locvec = p; //used when block is placed
+        globalcol.gameObject.transform.position = c;
+        p.x = -.30625f * (float)p.x - 9.9f;
+        p.y = determineY(globalcol.gameObject);//Determines y coordinate for current block                     //.12533f * (float)p.y + 21.3f;
+        p.z = -.30625f * (float)p.z - 73.3f;
+        //p.y = getBlockPlacement(xx,zz,p.y);//21.2f;
+        //
+
+        tra2.position = p;
+        
+        return getBlockXYZCoor(shadow, true);
+    }
+
 
     //Update----------------------------------------
     //Function with object modification functions
@@ -298,11 +348,11 @@ public class PickupParent : MonoBehaviour
         if (globalcol) shadow.transform.rotation = Quaternion.Euler(-90, yRot, 0);
 
         //If device trigger is pressed
-        if (device.GetTouch(SteamVR_Controller.ButtonMask.Trigger))
+        if (device.GetTouch(SteamVR_Controller.ButtonMask.Trigger) && !made)
         {
 
             //getting location
-            Transform loc = gameObject.GetComponent<Transform>();
+            Transform loc = sphere.GetComponent<Transform>();
             Vector3 c = loc.position;
 
             //If lego is above the platform
@@ -323,15 +373,15 @@ public class PickupParent : MonoBehaviour
                 //Modify the height of the shadow cast
                 p = getBlockPlacement(xxx, yyy, zzz, 1, 1, 1);
                 locvec = p; //used when block is placed
-
+                if (globalcol && !made) globalcol.gameObject.transform.position = c;
                 p.x = -.30625f * (float)p.x - 9.9f;
                 p.y = determineY(globalcol.gameObject);//Determines y coordinate for current block                     //.12533f * (float)p.y + 21.3f;
                 p.z = -.30625f * (float)p.z - 73.3f;
                 //p.y = getBlockPlacement(xx,zz,p.y);//21.2f;
                 //
-                tra2.position = p;
+                if (!made) tra2.position = p;
 
-                if (globalcol) globalcol.gameObject.transform.position = c;
+                
                 if (itemh) shadow.SetActive(true);
             }
             else {
@@ -344,8 +394,9 @@ public class PickupParent : MonoBehaviour
             yRot += 90;
         }
 
-        if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger) && globalcol != null)
+        if (device.GetPressUp(SteamVR_Controller.ButtonMask.Trigger) && globalcol != null && !made)
         {
+            made = true;
             //Debug.Log("You have released PressUp while colliding with " + col.name);
             globalcol.gameObject.transform.SetParent(null);
             globalcol.attachedRigidbody.isKinematic = false;
@@ -353,6 +404,7 @@ public class PickupParent : MonoBehaviour
             else Debug.Log("No object selected");
             if (abovePlat())
             {
+                
                 //updateBlocks((int)locvec.x,(int)locvec.y,(int)locvec.z, 1, 1, 1);
                 addBlock2Array(shadow);
                 //Debug.Log("Block Added");
@@ -361,11 +413,12 @@ public class PickupParent : MonoBehaviour
                 //if (abovePlat()) {
                 Destroy(globalcol.gameObject);
                 //}
-                shadow.SetActive(true);
+                
             }
             globalcol = null;
             itemh = false;
             //tossObject(col.attachedRigidbody);
+            made = false;
         }
     }
 
@@ -392,30 +445,33 @@ public class PickupParent : MonoBehaviour
                 col.gameObject.transform.SetParent(gameObject.transform);
             
                 globalcol = col;
-
+                Collider coll;
                 if (globalcol) Debug.Log("Grab: " + globalcol.gameObject.name);
-                if (abovePlat()) removeBlockFromArray(col.gameObject);
+                if (abovePlat())
+                {
+                    removeBlockFromArray(col.gameObject);
+                     coll = globalcol.gameObject.GetComponent<Collider>();
 
+                }
                 //Creating shadow---------
-                Collider coll = globalcol.gameObject.GetComponent<Collider>();
-                Vector3 c = coll.bounds.center;
-                Vector3 ma = coll.bounds.max;
-                Vector3 mi = coll.bounds.min;
-                shadow = Instantiate(globalcol.gameObject, c, Quaternion.Euler(-90, yRot, 0)) as GameObject;
+                 coll = globalcol;
+                    Vector3 c = coll.bounds.center;
+                    Vector3 ma = coll.bounds.max;
+                    Vector3 mi = coll.bounds.min;
+                    shadow = Instantiate(globalcol.gameObject, c, Quaternion.Euler(-90, yRot, 0)) as GameObject;
 
+                    tra2 = shadow.GetComponent<Transform>();
+                    Vector3 p = tra2.position;
+                    p.y = 22;
+                    tra2.position = p;
+                    tra2.localScale = new Vector3(1, 1, 1);
+                    /*
+                    Color cc = shadow.gameObject.GetComponent<Renderer>().material.color;
+                    cc.a = 0.5f;
+                    shadow.gameObject.GetComponent<Renderer>().material.color = cc;*/
+                    //----------------------
 
-                tra2 = shadow.GetComponent<Transform>();
-                Vector3 p = tra2.position;
-                p.y = 22;
-                tra2.position = p;
-                tra2.localScale = new Vector3(1, 1, 1);
-                /*
-                Color cc = shadow.gameObject.GetComponent<Renderer>().material.color;
-                cc.a = 0.5f;
-                shadow.gameObject.GetComponent<Renderer>().material.color = cc;*/
-                //----------------------
-
-                itemh = true;
+                    itemh = true;
             }
         }
         
