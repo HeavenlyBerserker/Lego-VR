@@ -1,17 +1,32 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class spawnBlocks0 : MonoBehaviour {
+
+    public int ind;
 
 	// Use this for initialization
 	void Start () {
 
         string[] blockNames = { "Blocks/black2x10" , "Blocks/red2x8" , "Blocks/green1x8", "Blocks/green2x6", "Blocks/grey2x4", "Blocks/purple1x3x2", "Blocks/black2x2", "Blocks/green1x6 (1)", "Blocks/blue1x4", "Blocks/blue1x3", "Blocks/orange2x2x.33", "Blocks/orange1x3", "Blocks/1x1 (2)", };
-        
+
         //comment or uncomment block set below to switch between sets
-        
-        //int[] blockNums = { 2,4,4,3,1,5,3,3,4,5,4,5,3}; //set 1
-        int[] blockNums = { 3, 1, 6, 3, 3, 8, 5, 0, 3, 4, 6, 2, 4 }; //set 2
+
+        int[] blockNums = { 3, 1, 6, 3, 3, 8, 5, 0, 3, 4, 6, 2, 4 };
+        List<int[]> sets = new List<int[]>();
+        sets.Add(blockNums);
+        int[] blockNums2 = { 2, 4, 4, 3, 1, 5, 3, 3, 4, 5, 4, 5, 3 };
+        sets.Add(blockNums2);
+        int[] blockNums3 = { 1, 6, 6, 3, 1, 4, 3, 1, 3, 3, 5, 3, 8 };
+        sets.Add(blockNums3);
+        int[] blockNums4 = { 7, 3, 2, 1, 2, 1, 2, 1, 4, 5, 2, 3, 3 };
+        sets.Add(blockNums4);
+        int[] blockNums5 = { 4, 4, 3, 2, 3, 2, 3, 4, 1, 8, 2, 0, 2 };
+        sets.Add(blockNums5);
+
+        blockNums = sets[ind];
+
         int xx = -20;
         int zz = -86;
         int number = 0;

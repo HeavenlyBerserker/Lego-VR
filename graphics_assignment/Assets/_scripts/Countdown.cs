@@ -5,19 +5,29 @@ using System;
 
 public class Countdown : MonoBehaviour
 {
+    public int testTime;
 
-    public float timeLeft = 300.0f;
+    private static float[] times = { 120f, 180f, 240f, 300f};
+
+    private float timeLeft = 500;
     public bool stop = true;
 
     private float minutes;
     private float seconds;
-
-    public Text text;
+    
 
     public void startTimer(float from)
     {
+        timeLeft = times[testTime];
         stop = false;
         timeLeft = from;
+        Update();
+    }
+
+    void Start()
+    {
+        timeLeft = times[testTime];
+        stop = false;
         Update();
     }
 
