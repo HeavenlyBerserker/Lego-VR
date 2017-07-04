@@ -1,4 +1,6 @@
-To open this project, you must go to the "Assets" directory and execute "scene.unity". Please write a detailed description for each commit you make with the following format: "Commit #: 0.??. date(mm/dd/yyyy) Description of what has been pushed". Please log changes on this file as well in the following section:
+This project allows the user to use the HTC Vive kit to build basic Lego structures in a Virtual environment. It ran on Unity's newest version as of 04/21/2017. To grab a Lego block, overlap the little white ball in front of the virtual vive controller with the Lego block you wish to grab and press the trigger. You can drag the block around by moving the controller with the trigger pressed down. Once on the platform, you can release the trigger to place the block. All relevant code is contained in Lego-VR/graphics_assignment/Assets/_scripts/. The files with most of the code are Controller.cs, PickupParent.cs, and spawnBlocks.cs. Feel free to modify the code and/or scenes as needed, since there are still plenty of glitches and inconveniences with it.
+
+To open this project, you must go to the "Assets" directory and execute "scene.unity". The commits are written in the following format: "Commit #: 0.??. date(mm/dd/yyyy) Description of what has been pushed". Please log changes on this file as well in the following section:
 
 Commit # 0.01 01/17/2017
 This is the first commit after the creation of the repository. The commit added a preliminary version of the Lego building unity platform.
@@ -39,4 +41,14 @@ Betta stage ready. Major fixes and presentable code.
 Commit # 0.13 04/21/2017
 Ready for test version. Last issues resolved.
 
-This project assignment belongs to Hong Xu, Terence Williams, Dony Ramier, Joel Michelson, Josh Ladd, and Jack Morrison. All rights to edit, modify and distribute the code are strictly restricted to the people mentioned above. Any unauthorized use will be punished at the full extent of the law.
+This project assignment was created by Hong Xu, Terence Williams, Dony Ramier, Joel Michelson, Josh Ladd, and Jack Morrison. Feel free to edit and modify this code as you deem necessary. We do not claim any rights to any Lego block related features. The project was solely created for research purposes.
+
+Future work (If you wish to add anything):
+-Fix some rare block overlap issues.
+-Add more blocks.
+-Create a block generation and coloring interface.
+-Create and allow more blocks.
+-Change block placement dynamics.
+-Fix frame-drop issues when looking at Lego base platform, due to mesh quantity.
+
+If you have any questions about the code or the interface, you can contact us at hongchido@hotmail.com.
